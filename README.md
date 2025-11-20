@@ -402,4 +402,3 @@ Licensed under the Apache License, Version 2.0
 ---
 
 **Made with ❤️ by Cedric Sebastian**
-**Version 2.0 - Truly Autonomous Research**
