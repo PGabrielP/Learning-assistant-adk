@@ -1,6 +1,6 @@
 # CedLM: Autonomous Deep Research Agent
 
-**Powered by Google Agent Development Kit (ADK) & Gemini 2.0**
+**Powered by Google Agent Development Kit (ADK) & Gemini 3 Pro**
 
 > **Truly Autonomous Rigorous Researcher that Iteratively Explores Topics Until Deep Understanding is Reached**
 
@@ -396,7 +396,7 @@ Licensed under the Apache License, Version 2.0
 ## 🙏 Acknowledgments
 
 - Google Agent Development Kit (ADK)
-- Google Gemini 2.0
+- Google Gemini 3 Pro
 - The open-source AI community
 
 ---
