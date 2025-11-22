@@ -128,7 +128,7 @@ GOOGLE_API_KEY=your_api_key_here
 
 **Interactive Mode (Recommended):**
 ```bash
-cd cedlm/agents
+cd cedlm/learning_agent
 python main.py
 ```
 
