@@ -176,6 +176,13 @@ config = DEEP_RESEARCH
 config = COMPREHENSIVE_RESEARCH
 ```
 
+Or select a preset at runtime without editing code by setting an environment variable:
+
+```bash
+export CEDLM_RESEARCH_PRESET=deep   # quick | standard | deep | comprehensive | default
+python main.py "Your Research Topic"
+```
+
 **Preset Comparison:**
 
 | Preset | Min Words | Min Sources | Min Complete | Max Iterations |

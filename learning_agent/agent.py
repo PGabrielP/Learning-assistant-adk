@@ -33,7 +33,42 @@ from google.adk.planners import BuiltInPlanner as BuiltinReasoner
 from google.adk.sessions import InMemorySessionService, Session
 from google.genai.types import HarmBlockThreshold, HarmCategory, types as genai_types
 
+from config import (
+    DEFAULT_CONFIG,
+    ResearchConfig,
+    get_config_by_name,
+)
+
 load_dotenv()
+
+# --- Configuration Loading ---
+def _clone_config(config: ResearchConfig) -> ResearchConfig:
+    """Create a copy of the provided config to avoid accidental mutation."""
+    return ResearchConfig.from_dict(config.to_dict())
+
+
+def load_active_config() -> tuple[ResearchConfig, str]:
+    """Load the research config, optionally selecting a preset via env var."""
+    preset = os.getenv("CEDLM_RESEARCH_PRESET")
+    base_config = DEFAULT_CONFIG
+    active_name = "default"
+
+    if preset:
+        active_name = preset.lower()
+        try:
+            base_config = get_config_by_name(preset)
+        except ValueError:
+            logging.warning(
+                "Invalid CEDLM_RESEARCH_PRESET '%s'. Falling back to default.",
+                preset,
+            )
+            active_name = "default"
+
+    return _clone_config(base_config), active_name
+
+
+ACTIVE_CONFIG, ACTIVE_CONFIG_NAME = load_active_config()
+
 
 # --- Configure Google API Key ---
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
@@ -47,8 +82,8 @@ else:
         print(f"Failed to configure Google Generative AI SDK: {e}")
 
 # --- Configure Gemini Settings ---
-model = "gemini-3-pro-preview"
-temperature = 0.2  # Low temperature for factual accuracy
+model = ACTIVE_CONFIG.model
+temperature = ACTIVE_CONFIG.temperature  # Low temperature for factual accuracy
 safety_settings = {  # Adjust harm block thresholds as needed
     HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
     HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
@@ -57,10 +92,13 @@ safety_settings = {  # Adjust harm block thresholds as needed
 }
 
 # --- Research Quality Configuration ---
-MIN_WORD_COUNT = 500
-MIN_SOURCES = 3
-MIN_COMPLETENESS = 70.0
-MAX_ITERATIONS = 8
+MIN_WORD_COUNT = ACTIVE_CONFIG.min_word_count
+MIN_SOURCES = ACTIVE_CONFIG.min_sources
+MIN_COMPLETENESS = ACTIVE_CONFIG.min_completeness
+MAX_ITERATIONS = ACTIVE_CONFIG.max_iterations
+SECTIONS_PER_ITERATION = ACTIVE_CONFIG.sections_per_iteration
+EXAMPLES_WEIGHT = ACTIVE_CONFIG.examples_weight
+TECHNICAL_WEIGHT = ACTIVE_CONFIG.technical_weight
 
 # --- Callbacks --- #
 
@@ -291,10 +329,14 @@ def evaluate_overall_quality(callback_context: CallbackContext) -> Dict[str, Any
         should_continue = True
         reasons.append(f"Average sources {avg_sources:.1f} < {MIN_SOURCES}")
 
-    if sections_with_examples < total_sections * 0.8:  # 80% should have examples
+    if sections_with_examples < total_sections * EXAMPLES_WEIGHT:
         should_continue = True
         reasons.append(
             f"Only {sections_with_examples}/{total_sections} sections have examples")
+    if sections_with_technical < total_sections * TECHNICAL_WEIGHT:
+        should_continue = True
+        reasons.append(
+            f"Only {sections_with_technical}/{total_sections} sections have technical depth")
 
     if len(knowledge_gaps) > 0:
         should_continue = True
@@ -902,7 +944,7 @@ class IterativeResearchAgent(Agent):
 
         state["sections_researched"] = sections_researched
 
-        return sections_to_research[:5]  # Limit to 5 sections per iteration
+        return sections_to_research[:SECTIONS_PER_ITERATION]
 
     def _create_research_prompt(self, section: str, state: Dict, original_query: str) -> str:
         """Create a focused research prompt for a specific section."""
@@ -999,3 +1041,5 @@ Be rigorous in your evaluation.
 core_agent = IterativeResearchAgent(name="CedLM Autonomous Researcher")
 
 app = App(core_agent=core_agent, name="CedLM Agent")
+
+__all__ = ["core_agent", "ACTIVE_CONFIG", "ACTIVE_CONFIG_NAME", "IterativeResearchAgent"]

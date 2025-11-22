@@ -1,4 +1,4 @@
-from agent import core_agent
+from agent import core_agent, ACTIVE_CONFIG, ACTIVE_CONFIG_NAME
 from tools import (
     save_markdown_curriculum,
     save_research_metadata,
@@ -16,17 +16,22 @@ import logging
 from datetime import datetime
 from typing import Optional
 
+from config import print_config
+
 # Add the current directory to sys.path to ensure we can import agent.py
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.append(current_dir)
 
 # Configure logging
+log_file_path = ACTIVE_CONFIG.log_file
+log_dir = os.path.dirname(log_file_path)
+os.makedirs(log_dir, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('cedlm_research.log'),
+        logging.FileHandler(log_file_path),
         logging.StreamHandler(sys.stdout)
     ]
 )
@@ -115,6 +120,7 @@ async def run_agent(
     """
     logger.info(f"Starting autonomous research for topic: {query}")
     logger.info(f"User ID: {user_id}")
+    logger.info("Active research preset: %s", ACTIVE_CONFIG_NAME)
 
     # Store the topic in session state for tracking
     session.state["research_topic"] = query
@@ -150,7 +156,7 @@ async def run_agent(
         print_research_summary(state)
 
         # Save outputs
-        output_dir = os.path.join(current_dir, "output")
+        output_dir = os.path.join(current_dir, ACTIVE_CONFIG.output_dir)
 
         # Save the markdown curriculum
         markdown_content = state.get("final_markdown_curriculum", "")
@@ -202,6 +208,8 @@ async def main():
     print("="*80)
     print("Powered by Google Agent Development Kit & Gemini 2.0")
     print("="*80 + "\n")
+    print(f"🛠️ Active research preset: {ACTIVE_CONFIG_NAME}")
+    print_config(ACTIVE_CONFIG)
 
     # Get research topic from command line or interactive input
     topic = parse_command_line_args()
