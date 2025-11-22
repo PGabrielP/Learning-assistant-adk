@@ -26,9 +26,7 @@ if current_dir not in sys.path:
 # Configure logging
 log_file_path = ACTIVE_CONFIG.log_file
 log_dir = os.path.dirname(log_file_path)
-if log_dir:
-    os.makedirs(log_dir, exist_ok=True)
-
+os.makedirs(log_dir, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
