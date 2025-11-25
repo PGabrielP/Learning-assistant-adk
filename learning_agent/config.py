@@ -43,7 +43,7 @@ class ResearchConfig:
     examples_weight: float = 0.8  # % of sections that should have examples
     technical_weight: float = 0.7  # % of sections that should have technical depth
 
-    max_thoughts: int = 5  # Maximum thoughts per section per iteration
+    max_thoughts: int = 32768  # Maximum thoughts budget for planner
     enable_safety: bool = True  # Enable safety checks during research
 
     # Output Configuration

@@ -8,6 +8,7 @@ from tools import (
 from google.adk.sessions import Session, InMemorySessionService
 from google.adk.runners import Runner
 from google.genai import types
+from google.genai.types import Content, Part
 from google.adk.agents import Agent
 import asyncio
 import sys
@@ -102,7 +103,7 @@ def parse_command_line_args() -> Optional[str]:
 async def run_agent(
     agent: Agent,
     query: str,
-    session: Session,
+    session_id: str,
     user_id: str,
     session_service: InMemorySessionService,
 ):
@@ -112,7 +113,7 @@ async def run_agent(
     Args:
         agent: The agent to run
         query: The research query/topic
-        session: The session object
+        session_id: The session ID string
         user_id: User identifier
         session_service: Session service for state management
 
@@ -122,9 +123,6 @@ async def run_agent(
     logger.info(f"Starting autonomous research for topic: {query}")
     logger.info(f"User ID: {user_id}")
     logger.info("Active research preset: %s", ACTIVE_CONFIG_NAME)
-
-    # Store the topic in session state for tracking
-    session.state["research_topic"] = query
 
     runner = Runner(
         agent=agent,
@@ -145,14 +143,47 @@ async def run_agent(
     print("   This may take several minutes depending on topic complexity.\n")
 
     try:
-        # Run the agent (the IterativeResearchAgent handles all iterations internally)
-        response = runner.run(
-            user_id=user_id, new_message=query, session_id=session)
+        # Collect all response parts
+        final_response_text = ""
+        final_state = {}
+
+        # Create proper Content object with user role for the message
+        user_message = Content(
+            role="user",
+            parts=[Part(text=query)]
+        )
+
+        # Use async iteration over the runner events
+        async for event in runner.run_async(
+            user_id=user_id,
+            session_id=session_id,
+            new_message=user_message
+        ):
+            # Process events - look for final response content
+            if event.content and event.content.parts:
+                for part in event.content.parts:
+                    if hasattr(part, 'text') and part.text:
+                        final_response_text = part.text  # Keep latest text
+
+            # Check for state updates from actions
+            if event.actions and event.actions.state_delta:
+                final_state.update(event.actions.state_delta)
 
         print("\n✅ Research process completed!\n")
 
-        # Extract state from session
-        state = dict(session.state)
+        # Get session to access full state
+        session = await session_service.get_session(
+            app_name=agent.name,
+            user_id=user_id,
+            session_id=session_id
+        )
+
+        # Merge session state with collected state
+        if session and session.state:
+            state = dict(session.state)
+            state.update(final_state)
+        else:
+            state = final_state
 
         # Print research summary
         print_research_summary(state)
@@ -162,6 +193,10 @@ async def run_agent(
 
         # Save the markdown curriculum
         markdown_content = state.get("final_markdown_curriculum", "")
+        if not markdown_content and final_response_text:
+            # Fallback to the final response text if no markdown in state
+            markdown_content = final_response_text
+
         if markdown_content:
             curriculum_path = save_markdown_curriculum(
                 markdown_content=markdown_content,
@@ -192,7 +227,7 @@ async def run_agent(
         print("✨ All outputs saved successfully!")
         print("="*80 + "\n")
 
-        return response
+        return final_response_text
 
     except Exception as e:
         logger.error(f"Error during research process: {e}", exc_info=True)
@@ -231,15 +266,18 @@ async def main():
     # Initialize session service
     session_service = InMemorySessionService()
     user_id = f"researcher_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+    # Create session and get its ID
     session = await session_service.create_session(
         app_name=core_agent.name, user_id=user_id)
+    session_id = session.id  # Extract the session ID string
 
     # Run the autonomous research agent
     try:
         await run_agent(
             agent=core_agent,
             query=topic,
-            session=session,
+            session_id=session_id,  # Pass session_id string, not Session object
             user_id=user_id,
             session_service=session_service
         )
