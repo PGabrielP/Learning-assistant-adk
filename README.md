@@ -1,4 +1,4 @@
-# CedLM: Autonomous Deep Research Agent
+# Learning Agent ADK: Autonomous Deep Research Agent
 
 **Powered by Google Agent Development Kit (ADK) & Gemini 3 Pro**
 
@@ -6,7 +6,7 @@
 
 ## 🎯 Overview
 
-CedLM is a **fully autonomous research agent** that performs rigorous, iterative deep research on any topic and generates comprehensive markdown curriculum documents. The agent **autonomously decides** when to continue researching based on quality metrics until deep understanding is achieved.
+Learning Agent ADK is a **fully autonomous research agent** that performs rigorous, iterative deep research on any topic and generates comprehensive markdown curriculum documents. The agent **autonomously decides** when to continue researching based on quality metrics until deep understanding is achieved.
 
 ### What Makes It Truly Autonomous?
 
@@ -136,7 +136,7 @@ GOOGLE_API_KEY=your_api_key_here
 
 **Interactive Mode (Recommended):**
 ```bash
-cd cedlm/learning_agent
+cd learning_agent
 python main.py
 ```
 
